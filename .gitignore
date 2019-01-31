@@ -54,3 +54,4 @@ imports/plugins/custom/*
 .reaction/config.json
 
 coverage/*
+package-lock.json

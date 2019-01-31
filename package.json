@@ -76,7 +76,9 @@
     "graphql": "14.0.2",
     "graphql-fields": "1.1.0",
     "graphql-iso-date": "3.5.0",
+    "graphql-redis-subscriptions": "^2.0.0",
     "graphql-relay": "0.5.5",
+    "graphql-subscriptions": "^1.0.0",
     "graphql-tag": "2.9.2",
     "graphql-tools": "4.0.3",
     "graphql.js": "0.4.20",
@@ -89,6 +91,7 @@
     "i18next-sprintf-postprocessor": "^0.2.2",
     "immutability-helper": "^2.6.5",
     "immutable": "^3.8.2",
+    "ioredis": "^4.5.1",
     "jquery-i18next": "^1.2.1",
     "later": "^1.2.0",
     "libphonenumber-js": "1.4.2",
@@ -369,7 +372,9 @@
   },
   "jest": {
     "setupTestFrameworkScriptFile": "<rootDir>/imports/test-utils/setupJestTests.js",
-    "modulePathIgnorePatterns": ["node_modules"]
+    "modulePathIgnorePatterns": [
+      "node_modules"
+    ]
   },
   "eslintConfig": {
     "extends": "@reactioncommerce",

@@ -1,6 +1,7 @@
 import { createServer } from "http";
 import { PubSub } from "apollo-server";
 import mongodb, { MongoClient } from "mongodb";
+import { RedisPubSub } from "graphql-redis-subscriptions";
 import appEvents from "./util/appEvents";
 import createApolloServer from "./createApolloServer";
 import defineCollections from "./util/defineCollections";
@@ -20,11 +21,33 @@ function defaultAddCallMethod(context) {
 }
 
 export default class ReactionNodeApp {
+
   constructor(options = {}) {
     this.options = { ...options };
     this.collections = {
       ...(options.additionalCollections || {})
     };
+    let pubSub;
+
+    const {
+      REDIS_URL,
+      REDIS_PORT
+    } = process.env;
+
+    // Needed for horizontal scale of the GraphQL Server Subscriptions
+    if (REDIS_URL && REDIS_PORT) {
+      pubSub = new RedisPubSub({
+        connection: {
+          host: REDIS_URL,
+          port: REDIS_PORT,
+          retryStrategy: (opt) => Math.max(opt.attempt * 100, 3000)
+        }
+      });
+    } else {
+      // In a large production app, you may want to use an external pub-sub system. Here for dev purpose
+      pubSub = new PubSub();
+    }
+
     this.context = {
       ...(options.context || {}),
       app: this,
@@ -33,10 +56,7 @@ export default class ReactionNodeApp {
       getFunctionsOfType(type) {
         return ((options.functionsByType || {})[type]) || [];
       },
-      // In a large production app, you may want to use an external pub-sub system.
-      // See https://www.apollographql.com/docs/apollo-server/features/subscriptions.html#PubSub-Implementations
-      // We may eventually bind this directly to Kafka.
-      pubSub: new PubSub()
+      pubSub
     };
 
     this.mongodb = options.mongodb || mongodb;
